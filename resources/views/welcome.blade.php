@@ -18,6 +18,9 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
+    <div class="d-flex align-items-center">
+        <a href="/orders" class="btn btn-outline-light btn-sm me-2">Riwayat Pesanan</a>
+    </div>
     <div class="container">
         <a class="navbar-brand fw-bold" href="/"> Sparepart PC Shop</a>
         <div class="d-flex align-items-center">
@@ -78,7 +81,7 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button class="btn btn-dark">Beli Sekarang</button>
+                        <a href="/checkout/{{ $p->id }}" class="btn btn-dark">Beli Sekarang</a>
 
                         @auth
                         <div class="btn-group gap-1">

@@ -14,3 +14,6 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::get('/delete/{id}', [ProductController::class, 'destroy']);
+Route::get('/checkout/{id}', [OrderController::class, 'checkout']);
+Route::post('/store-order', [OrderController::class, 'storeOrder']);
+Route::get('/orders', [OrderController::class, 'index']);

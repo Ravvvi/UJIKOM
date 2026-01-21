@@ -22,3 +22,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/update/{id}', [ProductController::class, 'update']);
     Route::get('/delete/{id}', [ProductController::class, 'destroy']);
 });
+
+Route::post('/confirm-order', [OrderController::class, 'confirmOrder']);

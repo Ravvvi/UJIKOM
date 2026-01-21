@@ -37,12 +37,17 @@
                         </div>
                     </div>
 
-                    <div class="bg-light p-3 rounded mb-4 border">
-                        <h6 class="fw-bold"><i class="bi bi-bank"></i> Instruksi Pembayaran</h6>
-                        <p class="mb-1 small text-muted">Silakan transfer tepat sesuai nominal ke:</p>
-                        <p class="mb-0 fw-bold text-primary">Bank BCA: 123-456-7890</p>
-                        <p class="mb-0 fw-bold">A/N: Sparepart PC Shop Official</p>
-                    </div>
+                    <div class="bg-light p-3 rounded mb-4 border text-center">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-qr-code-scan"></i> Bayar Pakai QRIS</h6>
+    
+                        <div class="mb-3">
+                            <img src="{{ asset('images/gopay.jpeg') }}" alt="QRIS Pembayaran" class="img-fluid rounded shadow-sm" style="max-width: 250px;">
+                        </div>
+    
+                            <p class="mb-1 small text-muted">Scan QRIS di atas dengan aplikasi m-banking atau e-wallet (GoPay, OVO, Dana, dll) sebesar:</p>
+                            <h4 class="fw-bold text-primary">Rp {{ number_format($total_price, 0, ',', '.') }}</h4>
+                            <p class="mb-0 x-small text-danger">*Pastikan nominal sesuai agar pesanan cepat diproses</p>
+                        </div>
 
                     <form action="/confirm-order" method="POST">
                         @csrf

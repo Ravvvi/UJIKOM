@@ -9,20 +9,19 @@
         body { background-color: #f8f9fa; }
         .card-product { transition: 0.3s; border: none; border-radius: 15px; overflow: hidden; }
         .card-product:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        /* Style untuk gambar agar seragam ukurannya */
         .product-img { height: 200px; object-fit: cover; width: 100%; } 
-        .btn-add { border-radius: 10px; padding: 10px 20px; font-weight: bold; }
         .search-bar { max-width: 500px; margin: 0 auto 30px auto; }
     </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
-    <div class="d-flex align-items-center">
-        <a href="/orders" class="btn btn-outline-light btn-sm me-2">Riwayat Pesanan</a>
-    </div>
     <div class="container">
-        <a class="navbar-brand fw-bold" href="/"> Sparepart PC Shop</a>
+        <div class="d-flex align-items-center">
+            <a href="/orders" class="btn btn-outline-light btn-sm me-2">Riwayat Pesanan</a>
+            <a class="navbar-brand fw-bold" href="/">Sparepart PC Shop</a>
+        </div>
+        
         <div class="d-flex align-items-center">
             @auth
                 <a href="/create" class="btn btn-primary btn-sm me-2">+ Tambah Produk</a>
@@ -45,7 +44,7 @@
         </div>
     @endif
 
-    <h2 class="text-center mb-4 font-weight-bold">Katalog Produk Terbaru</h2>
+    <h2 class="text-center mb-4 fw-bold">Katalog Produk Terbaru</h2>
 
     <div class="search-bar">
         <form action="/" method="GET" class="d-flex">
@@ -86,9 +85,11 @@
                         @auth
                         <div class="btn-group gap-1">
                             <a href="/edit/{{ $p->id }}" class="btn btn-warning btn-sm fw-bold rounded">Edit</a>
-                            <a href="/delete/{{ $p->id }}" 
-                               class="btn btn-outline-danger btn-sm fw-bold rounded" 
-                               onclick="return confirm('Yakin ingin menghapus {{ $p->name }}?')">Hapus</a>
+                            <form action="/delete/{{ $p->id }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-outline-danger btn-sm fw-bold rounded w-100" onclick="return confirm('Yakin ingin menghapus {{ $p->name }}?')">Hapus</button>
+                            </form>
                         </div>
                         @endauth
                     </div>

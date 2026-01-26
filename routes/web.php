@@ -13,7 +13,7 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
-Route::get('/orders', [OrderController::class, 'index']);
+Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/checkout/{id}', [OrderController::class, 'checkout']);
 Route::post('/store-order', [OrderController::class, 'storeOrder']);
 
@@ -25,4 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/delete/{id}', [ProductController::class, 'destroy']);
 });
 
+Route::get('/payment/success/{id}', [OrderController::class, 'paymentSuccess'])->name('payment.success');
+
 Route::post('/confirm-order', [OrderController::class, 'confirmOrder']);
+Route::post('/webhook/xendit', [OrderController::class, 'handleWebhook']);
+
+Route::get('/confirm-manual/{id}', [OrderController::class, 'confirmOrder'])->name('order.confirm');

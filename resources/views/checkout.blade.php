@@ -27,11 +27,11 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('payment.create') }}" method="POST">
+                    <form action="/store-order" method="POST">
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
-                        <input type="hidden" name="product_name" value="{{ $product->name }}">
-                        <input type="hidden" name="total_price" value="{{ $product->price }}"> <div class="mb-3">
+                        
+                        <div class="mb-3">
                             <label class="form-label fw-bold">Nama Penerima</label>
                             <input type="text" name="customer_name" class="form-control" placeholder="Nama lengkap Anda" required>
                         </div>
@@ -47,12 +47,12 @@
                         </div>
 
                         <div class="alert alert-info">
-                            <small>Setelah klik tombol di bawah, Anda akan diarahkan ke gerbang pembayaran aman <strong>Xendit</strong>.</small>
+                            <small>Data pesanan akan disimpan di riwayat, lalu Anda akan diarahkan ke gerbang pembayaran <strong>Xendit</strong>.</small>
                         </div>
 
                         <hr>
                         <div class="d-grid gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg fw-bold">Bayar Sekarang via Xendit</button>
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold">Konfirmasi & Bayar</button>
                             <a href="/" class="btn btn-light">Batal</a>
                         </div>
                     </form>

@@ -18,20 +18,23 @@ class PaymentController extends Controller
     {
         $apiInstance = new InvoiceApi();
 
+        $orderId = $request->order_id; 
+
         $create_invoice_request = new CreateInvoiceRequest([
-            'external_id' => 'ORD-' . time(),
-            'amount' => $request->total_price,
-            'description' => 'Pembayaran ' . $request->product_name,
+            'external_id' => 'ORD-' . $orderId . '-' . time(),
+            'amount' => (float) $request->total_price,
+            'description' => 'Pembayaran ' . $request->product_name . ' (Order #' . $orderId . ')',
             'invoice_duration' => 86400,
-            'success_redirect_url' => url('/'),
+            'success_redirect_url' => url('/orders'), 
+            'currency' => 'IDR',
         ]);
 
         try {
             $result = $apiInstance->createInvoice($create_invoice_request);
-            // membuka halaman pembayaran Xendit
+            
             return redirect($result['invoice_url']);
         } catch (\Exception $e) {
-            return "Error: " . $e->getMessage();
+            return "Waduh, ada kendala: " . $e->getMessage();
         }
     }
 }

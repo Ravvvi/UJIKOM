@@ -31,6 +31,7 @@
                                 <option value="Processor" {{ $product->category == 'Processor' ? 'selected' : '' }}>Processor</option>
                                 <option value="RAM" {{ $product->category == 'RAM' ? 'selected' : '' }}>RAM</option>
                                 <option value="Motherboard" {{ $product->category == 'Motherboard' ? 'selected' : '' }}>Motherboard</option>
+                                <option value="PSU" {{ $product->category == 'PSU' ? 'selected' : '' }}>PSU</option>
                             </select>
                         </div>
 
@@ -66,7 +67,7 @@
 
                         <div class="d-flex justify-content-between">
                             <a href="/" class="btn btn-secondary">Batal</a>
-                            <button type="submit" class="btn btn-warning fw-bold">Update Data & Foto</button>
+                            <button type="submit" class="btn btn-warning fw-bold">Update Data</button>
                         </div>
                     </form>
                 </div>

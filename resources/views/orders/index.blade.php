@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riwayat Pesanan - Sparepart PC Shop</title>
+    <title>Riwayat Pesanan - PC Master Hub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
@@ -18,7 +18,7 @@
 <div class="container mt-5 mb-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-dark">
-            <i class="bi bi-clock-history me-2"></i> Riwayat Pesanan
+            <i class="bi bi-clock-history me-2"></i> Riwayat Transaksi Sparepart
         </h2>
         <a href="/" class="btn btn-outline-dark shadow-sm">
             <i class="bi bi-house-door me-1"></i> Kembali ke Katalog
@@ -38,53 +38,48 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-dark">
                         <tr>
-                            <th class="ps-4 id-column">ID</th>
-                            <th>Nama Pembeli</th>
-                            <th>Produk</th>
+                            <th class="ps-4 id-column">No. Pesanan</th>
+                            <th>Nama Pelanggan</th>
+                            <th>Komponen PC</th>
                             <th class="text-center">Jumlah</th>
-                            <th>Total Harga</th>
-                            <th>Status Pembayaran</th>
+                            <th>Total Pembayaran</th>
+                            <th>Status Konfirmasi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($orders as $order)
                         <tr>
                             <td class="ps-4 fw-bold text-secondary">
-                                #{{ $order->getKey() ?? '?' }}
+                                #{{ $order->id ?? $loop->iteration }}
                             </td>
                             <td>{{ $order->customer_name }}</td>
                             <td>
                                 <span class="d-block fw-semibold">{{ $order->product->name ?? 'Produk Tidak Ditemukan' }}</span>
-                                <small class="text-muted small">ID Produk: {{ $order->product_id }}</small>
+                                <small class="text-muted small">Kategori: {{ $order->product->category ?? 'Sparepart' }}</small>
                             </td>
-                            <td class="text-center">{{ $order->quantity }} pcs</td>
+                            <td class="text-center">{{ $order->quantity }} unit</td>
                             <td class="fw-bold text-primary">
                                 Rp {{ number_format($order->total_price, 0, ',', '.') }}
                             </td>
                             <td>
-                                @if($order->status == 'Sudah Terbayar')
+                                @if($order->status == 'Sudah Terbayar' || $order->status == 'Success')
                                     <span class="badge bg-success rounded-pill shadow-sm">
-                                        <i class="bi bi-check-circle me-1"></i> Sudah Terbayar
+                                        <i class="bi bi-check-circle me-1"></i> Pembayaran Berhasil
                                     </span>
                                 @else
-                                    {{-- 
-                                        ANTI-ERROR: Cek dulu apakah ID ada. 
-                                        Kalau tidak ada, tampilkan tombol tapi jangan kasih link dulu biar gak error 500.
-                                    --}}
-                                    @if($order->getKey())
-                                        <a href="{{ route('payment.success', $order->getKey()) }}" class="text-decoration-none badge-link">
+                                    @if($order->id)
+                                        <a href="{{ route('payment.success', $order->id) }}" class="text-decoration-none badge-link">
                                             <span class="badge bg-warning text-dark rounded-pill shadow-sm">
                                                 <i class="bi bi-hourglass-split me-1"></i> Menunggu Pembayaran
                                             </span>
                                         </a>
                                     @else
                                         <span class="badge bg-secondary text-white rounded-pill shadow-sm">
-                                            ID Bermasalah
+                                            Menunggu Sistem
                                         </span>
                                     @endif
-                                    
                                     <div style="font-size: 10px;" class="text-muted mt-1 ps-1 italic">
-                                        <i class="bi bi-info-circle me-1"></i>Klik untuk simulasi bayar
+                                        <i class="bi bi-info-circle me-1"></i>Klik badge untuk simulasi Xendit
                                     </div>
                                 @endif
                             </td>
@@ -93,7 +88,7 @@
                         <tr>
                             <td colspan="6" class="text-center py-5 text-muted">
                                 <i class="bi bi-cart-x fs-1 d-block mb-2"></i>
-                                Belum ada riwayat pemesanan.
+                                Belum ada riwayat transaksi sparepart.
                             </td>
                         </tr>
                         @endforelse

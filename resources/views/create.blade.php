@@ -39,6 +39,7 @@
                                 <option value="RAM">RAM (Memory)</option>
                                 <option value="Storage">Storage (SSD/HDD)</option>
                                 <option value="Motherboard">Motherboard</option>
+                                <option value="PSU">PSU (Power Supply)</option>
                             </select>
                         </div>
 

@@ -64,14 +64,35 @@ class OrderController extends Controller
         $order = Order::findOrFail($id); 
         
         if ($order->status == 'Menunggu Pembayaran') {
-            $order->update(['status' => 'Sudah Terbayar']); //
-            
-            $product = Product::find($order->product_id);
-            if($product) {
-                $product->decrement('stock', $order->quantity);
-            }
+            $this->finalizeOrder($order);
         }
         
         return redirect('/orders')->with('success', 'Pembayaran Berhasil! Status otomatis diperbarui.');
+    }
+
+    public function handleWebhook(Request $request)
+    {
+        $externalId = $request->external_id;
+        $status = $request->status;
+
+        $order = Order::find($externalId);
+
+        if ($order && ($status === 'PAID' || $status === 'SETTLED')) {
+            if ($order->status == 'Menunggu Pembayaran') {
+                $this->finalizeOrder($order);
+            }
+        }
+
+        return response()->json(['status' => 'success']);
+    }
+
+    private function finalizeOrder($order)
+    {
+        $order->update(['status' => 'Sudah Terbayar']);
+        
+        $product = Product::find($order->product_id);
+        if($product) {
+            $product->decrement('stock', $order->quantity);
+        }
     }
 }

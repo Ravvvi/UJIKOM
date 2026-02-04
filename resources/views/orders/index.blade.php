@@ -9,8 +9,7 @@
     <style>
         .card { border-radius: 15px; overflow: hidden; }
         .table thead { background-color: #212529; color: white; }
-        .badge { font-weight: 500; padding: 0.5em 0.8em; cursor: pointer; transition: 0.3s; }
-        .badge-link:hover { opacity: 0.8; transform: scale(1.05); }
+        .badge { font-weight: 500; padding: 0.5em 0.8em; transition: 0.3s; }
         .id-column { min-width: 80px; }
     </style>
 </head>
@@ -62,25 +61,14 @@
                                 Rp {{ number_format($order->total_price, 0, ',', '.') }}
                             </td>
                             <td>
-                                @if($order->status == 'Sudah Terbayar' || $order->status == 'Success')
-                                    <span class="badge bg-success rounded-pill shadow-sm">
+                                @if($order->status == 'sukses' || $order->status == 'PAID')
+                                    <span class="badge bg-success rounded-pill shadow-sm text-white">
                                         <i class="bi bi-check-circle me-1"></i> Pembayaran Berhasil
                                     </span>
                                 @else
-                                    @if($order->id)
-                                        <a href="{{ route('payment.success', $order->id) }}" class="text-decoration-none badge-link">
-                                            <span class="badge bg-warning text-dark rounded-pill shadow-sm">
-                                                <i class="bi bi-hourglass-split me-1"></i> Menunggu Pembayaran
-                                            </span>
-                                        </a>
-                                    @else
-                                        <span class="badge bg-secondary text-white rounded-pill shadow-sm">
-                                            Menunggu Sistem
-                                        </span>
-                                    @endif
-                                    <div style="font-size: 10px;" class="text-muted mt-1 ps-1 italic">
-                                        <i class="bi bi-info-circle me-1"></i>Klik badge untuk simulasi Xendit
-                                    </div>
+                                    <span class="badge bg-warning text-dark rounded-pill shadow-sm">
+                                        <i class="bi bi-hourglass-split me-1"></i> Menunggu Pembayaran
+                                    </span>
                                 @endif
                             </td>
                         </tr>

@@ -30,6 +30,11 @@ class OrderController extends Controller
         ]);
 
         $product = Product::findOrFail($request->product_id);
+
+        if ($product->stock < $request->quantity) {
+            return redirect()->back()->with('error', 'Maaf, stok tidak mencukupi!');
+        }
+
         $total_price = $product->price * $request->quantity;
 
         $duplicate = Order::where('customer_name', $request->customer_name)
@@ -47,8 +52,10 @@ class OrderController extends Controller
             'address' => $request->address,
             'quantity' => $request->quantity,
             'total_price' => $total_price,
-            'status' => 'Menunggu Pembayaran', 
+            'sukses' => 'Sudah Terbayar', 
         ]);
+
+        $product->decrement('stock', $request->quantity);
 
         $request->merge([
             'order_id' => $order->id,
@@ -57,17 +64,6 @@ class OrderController extends Controller
         ]);
         
         return (new PaymentController())->createInvoice($request);
-    }
-
-    public function paymentSuccess($id)
-    {
-        $order = Order::findOrFail($id); 
-        
-        if ($order->status == 'Menunggu Pembayaran') {
-            $this->finalizeOrder($order);
-        }
-        
-        return redirect('/orders')->with('success', 'Pembayaran Berhasil! Status otomatis diperbarui.');
     }
 
     public function handleWebhook(Request $request)
@@ -89,10 +85,5 @@ class OrderController extends Controller
     private function finalizeOrder($order)
     {
         $order->update(['status' => 'Sudah Terbayar']);
-        
-        $product = Product::find($order->product_id);
-        if($product) {
-            $product->decrement('stock', $order->quantity);
-        }
     }
 }

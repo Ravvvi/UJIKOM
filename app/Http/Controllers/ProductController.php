@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -19,13 +20,21 @@ class ProductController extends Controller
         return view('welcome', compact('products'));
     }
 
+
     public function create()
     {
+        if (Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Akses ditolak! Anda bukan Admin.');
+        }
         return view('create');
     }
 
     public function store(Request $request)
     {
+        if (Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Anda tidak memiliki otoritas ini.');
+        }
+
         $data = $request->validate([
             'name' => 'required',
             'category' => 'required',
@@ -46,12 +55,20 @@ class ProductController extends Controller
 
     public function edit($id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Akses terbatas untuk Admin.');
+        }
+
         $product = Product::findOrFail($id);
         return view('edit', compact('product'));
     }
 
     public function update(Request $request, $id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Update gagal: Anda bukan Admin.');
+        }
+
         $product = Product::findOrFail($id);
 
         $data = $request->validate([
@@ -77,6 +94,10 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Hanya Admin yang boleh menghapus produk.');
+        }
+
         $product = Product::findOrFail($id);
 
         if ($product->image) {

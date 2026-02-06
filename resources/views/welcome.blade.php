@@ -20,7 +20,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm sticky-top">
     <div class="container">
         <div class="d-flex align-items-center">
-            <a href="/orders" class="btn btn-outline-light btn-sm me-3">
+            <a href="/orders" class="btn btn-outline-light btn-sm rounded-pill px-3 me-2">
                 <i class="bi bi-clock-history"></i> Riwayat
             </a>
             <a class="navbar-brand fw-bold" href="/">Sparepart PC Shop</a>
@@ -29,9 +29,13 @@
         <div class="ms-auto d-flex align-items-center">
             @auth
                 <span class="text-light small me-3 d-none d-md-inline">
-                    Admin: <strong>{{ Auth::user()->name }}</strong>
+                    {{ Auth::user()->role == 'admin' ? 'Admin:' : 'User:' }} <strong>{{ Auth::user()->name }}</strong>
                 </span>
-                <a href="/create" class="btn btn-primary btn-sm me-2">+ Tambah Produk</a>
+
+                @if(Auth::user()->role == 'admin')
+                    <a href="/create" class="btn btn-primary btn-sm me-2">+ Tambah Produk</a>
+                @endif
+
                 <form action="/logout" method="POST" class="d-inline">
                     @csrf
                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin logout?')">
@@ -40,7 +44,7 @@
                 </form>
             @else
                 <a href="/login" class="btn btn-outline-light btn-sm rounded-pill px-3">
-                    <i class="bi bi-person-lock me-1"></i> Admin Login
+                    <i class="bi bi-person-lock me-1"></i> Login
                 </a>
             @endauth
         </div>
@@ -96,18 +100,20 @@
                         </a>
 
                         @auth
-                        <div class="btn-group gap-1 mt-1">
-                            <a href="/edit/{{ $p->id }}" class="btn btn-warning btn-sm fw-bold rounded">
-                                <i class="bi bi-pencil-square"></i> Edit
-                            </a>
-                            <form action="/delete/{{ $p->id }}" method="POST" class="d-inline flex-grow-1">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-outline-danger btn-sm fw-bold rounded w-100" onclick="return confirm('Yakin ingin menghapus {{ $p->name }}?')">
-                                    <i class="bi bi-trash"></i> Hapus
-                                </button>
-                            </form>
-                        </div>
+                            @if(Auth::user()->role == 'admin')
+                            <div class="btn-group gap-1 mt-1">
+                                <a href="/edit/{{ $p->id }}" class="btn btn-warning btn-sm fw-bold rounded">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                                <form action="/delete/{{ $p->id }}" method="POST" class="d-inline flex-grow-1">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm fw-bold rounded w-100" onclick="return confirm('Yakin ingin menghapus {{ $p->name }}?')">
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
+                            @endif
                         @endauth
                     </div>
                 </div>
@@ -115,22 +121,6 @@
         </div>
         @endforeach
     </div>
-
-    @if($products->isEmpty())
-        <div class="text-center mt-5 p-5 bg-white rounded shadow-sm border">
-            <i class="bi bi-search fs-1 text-muted mb-3"></i>
-            <h4 class="text-muted">Oops! Sparepart "{{ request('search') }}" tidak ditemukan.</h4>
-            <a href="/" class="btn btn-primary mt-3">Lihat Semua Produk</a>
-        </div>
-    @endif
-</div>
-
-<footer class="text-center mt-5 mb-4 text-muted">
-    <hr class="container mb-4">
-    <p class="small mb-0">&copy; 2026 <strong>PC Master Hub</strong> - Sparepart PC Shop</p>
-    <p class="x-small">Ujikom Project Implementation</p>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </div>
 </body>
 </html>

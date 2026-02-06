@@ -8,7 +8,6 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-
     public function showLogin() {
         return view('login');
     }
@@ -21,9 +20,9 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            
+
             if (Auth::user()->role == 'admin') {
-                return redirect('/')->with('success', 'Selamat datang kembali, Admin!');
+                return redirect('/')->with('success', 'Selamat datang, Admin! Panel manajemen aktif.');
             }
             
             return redirect('/')->with('success', 'Halo ' . Auth::user()->name . ', selamat belanja!');
@@ -41,16 +40,39 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:5',
+            'role' => 'required',
+            'admin_code' => 'nullable'
         ]);
 
-        User::create([
+        $finalRole = 'user';
+        $kodeRahasiaAdmin = "ADMIN123";
+
+        if ($request->role == 'admin') {
+            $isEmailValid = str_contains(strtolower($request->email), '@admin.com');
+            $isCodeValid = ($request->admin_code === $kodeRahasiaAdmin);
+
+            if ($isEmailValid && $isCodeValid) {
+                $finalRole = 'admin';
+            } else {
+                $errorMsg = !$isEmailValid ? 'Email wajib gunakan domain @admin.com!' : 'Kode Rahasia Admin Salah!';
+                return back()->withInput()->with('error', $errorMsg);
+            }
+        }
+
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-            'role' => 'user',
+            'role' => $finalRole,
         ]);
 
-        return redirect('/login')->with('success', 'Pendaftaran berhasil! Silakan login.');
+        Auth::login($user); 
+        
+        $message = ($finalRole == 'admin') 
+            ? 'Akun Admin aktif! Tombol manajemen produk akan muncul.' 
+            : 'Pendaftaran berhasil sebagai Pembeli!';
+
+        return redirect('/')->with('success', $message);
     }
 
     public function logout(Request $request) {

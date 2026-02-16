@@ -6,6 +6,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
+// --- PUBLIC ROUTES ---
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
 
 Route::middleware('guest')->group(function () {
@@ -15,22 +16,28 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
-// Transaksi & Pembayaran
+// --- TRANSAKSI & PEMBAYARAN ---
 Route::get('/checkout/{id}', [OrderController::class, 'checkout'])->name('orders.checkout');
 Route::post('/store-order', [OrderController::class, 'storeOrder'])->name('orders.store');
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/payment/success/{id}', [OrderController::class, 'paymentSuccess'])->name('payment.success');
 Route::post('/webhook/xendit', [OrderController::class, 'handleWebhook']);
+Route::post('/create-invoice', [PaymentController::class, 'createInvoice'])->name('payment.create');
 
+// --- AUTHENTICATED ROUTES (Harus Login) ---
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // --- DASHBOARD ADMIN
+    Route::get('/admin', [ProductController::class, 'adminIndex'])->name('admin.dashboard');
+
+    // --- MANAJEMEN PRODUK ---
     Route::get('/create', [ProductController::class, 'create'])->name('products.create');
     Route::post('/store', [ProductController::class, 'store'])->name('products.store');
     Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('products.edit');
     Route::post('/update/{id}', [ProductController::class, 'update'])->name('products.update');
-    Route::get('/delete/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+    
+    Route::delete('/delete/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+    
     Route::get('/confirm-manual/{id}', [OrderController::class, 'confirmOrder'])->name('order.confirm');
 });
-
-Route::post('/create-invoice', [PaymentController::class, 'createInvoice'])->name('payment.create');

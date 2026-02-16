@@ -22,7 +22,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             if (Auth::user()->role == 'admin') {
-                return redirect('/')->with('success', 'Selamat datang, Admin! Panel manajemen aktif.');
+                return redirect('/admin')->with('success', 'Selamat datang, Admin! Panel manajemen aktif.');
             }
             
             return redirect('/')->with('success', 'Halo ' . Auth::user()->name . ', selamat belanja!');
@@ -68,11 +68,11 @@ class AuthController extends Controller
 
         Auth::login($user); 
         
-        $message = ($finalRole == 'admin') 
-            ? 'Akun Admin aktif! Tombol manajemen produk akan muncul.' 
-            : 'Pendaftaran berhasil sebagai Pembeli!';
+        if ($finalRole == 'admin') {
+            return redirect('/admin')->with('success', 'Akun Admin aktif! Panel manajemen siap digunakan.');
+        }
 
-        return redirect('/')->with('success', $message);
+        return redirect('/')->with('success', 'Pendaftaran berhasil sebagai Pembeli!');
     }
 
     public function logout(Request $request) {

@@ -20,6 +20,16 @@ class ProductController extends Controller
         return view('welcome', compact('products'));
     }
 
+    // --- TAMBAHAN FUNGSI ADMIN INDEX ---
+    public function adminIndex()
+    {
+        if (Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Akses ditolak!');
+        }
+
+        $products = Product::all();
+        return view('admin', compact('products'));
+    }
 
     public function create()
     {
@@ -50,7 +60,7 @@ class ProductController extends Controller
         }
 
         Product::create($data);
-        return redirect('/')->with('success', 'Barang berhasil ditambahkan!');
+        return redirect('/admin')->with('success', 'Barang berhasil ditambahkan!');
     }
 
     public function edit($id)
@@ -89,7 +99,7 @@ class ProductController extends Controller
         }
 
         $product->update($data);
-        return redirect('/')->with('success', 'Produk berhasil diperbarui!');
+        return redirect('/admin')->with('success', 'Produk berhasil diperbarui!');
     }
 
     public function destroy($id)
@@ -105,6 +115,6 @@ class ProductController extends Controller
         }
 
         $product->delete();
-        return redirect('/')->with('success', 'Produk berhasil dihapus!');
+        return redirect('/admin')->with('success', 'Produk berhasil dihapus!');
     }
 }

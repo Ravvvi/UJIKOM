@@ -22,41 +22,60 @@ class OrderController extends Controller
     }
 
     public function storeOrder(Request $request)
-{
-    $request->validate([
-        'product_id' => 'required',
-        'customer_name' => 'required',
-        'quantity' => 'required|numeric|min:1',
-    ]);
+    {
+        $request->validate([
+            'product_id' => 'required',
+            'customer_name' => 'required',
+            'quantity' => 'required|numeric|min:1',
+        ]);
 
-    $product = Product::findOrFail($request->product_id);
+        $product = Product::findOrFail($request->product_id);
 
-    if ($product->stock < $request->quantity) {
-        return redirect()->back()->with('error', 'Maaf, stok tidak mencukupi!');
+        if ($product->stock < $request->quantity) {
+            return redirect()->back()->with('error', 'Maaf, stok tidak mencukupi!');
+        }
+
+        $total_price = $product->price * $request->quantity;
+
+        $order = new Order();
+        $order->product_id = $request->product_id;
+        $order->customer_name = $request->customer_name;
+        $order->address = $request->address;
+        $order->quantity = $request->quantity;
+        $order->total_price = $total_price;
+        $order->status = '1'; 
+        $order->save();
+
+        $product->decrement('stock', $request->quantity);
+
+        $request->merge([
+            'order_id' => $order->id,
+            'total_price' => $total_price,
+            'product_name' => $product->name
+        ]);
+            
+        return (new PaymentController())->createInvoice($request);
     }
 
-    $total_price = $product->price * $request->quantity;
+    // --- FUNGSI UPDATE BARU ---
+    public function update(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+        $order->update($request->all());
 
-    $order = new Order();
-    $order->product_id = $request->product_id;
-    $order->customer_name = $request->customer_name;
-    $order->address = $request->address;
-    $order->quantity = $request->quantity;
-    $order->total_price = $total_price;
-    
-    // PAKAI ANGKA '1' - Cuma 1 karakter, database lo pasti nerima!
-    $order->status = '1'; 
-    $order->save();
+        return response()->json([
+            'message' => 'Data berhasil diperbarui!',
+            'data' => $order
+        ]);
+    }
 
-    $product->decrement('stock', $request->quantity);
+    public function destroy($id)
+    {
+        $order = Order::findOrFail($id);
+        $order->delete();
 
-    // KIRIM KE XENDIT
-    $request->merge([
-        'order_id' => $order->id,
-        'total_price' => $total_price,
-        'product_name' => $product->name
-    ]);
-        
-        return (new PaymentController())->createInvoice($request);
+        return response()->json([
+            'message' => 'Data berhasil dihapus!'
+        ]);
     }
 }

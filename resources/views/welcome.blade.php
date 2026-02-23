@@ -6,16 +6,8 @@
     <title>Sparepart PC Shop - PC Master Hub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <style>
-        body { background-color: #f8f9fa; }
-        .card-product { transition: 0.3s; border: none; border-radius: 15px; overflow: hidden; }
-        .card-product:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .product-img { height: 200px; object-fit: cover; width: 100%; } 
-        .search-bar { max-width: 500px; margin: 0 auto 30px auto; }
-        .navbar-brand { font-size: 1.5rem; }
-    </style>
 </head>
-<body>
+<body class="bg-light">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm sticky-top">
     <div class="container">
@@ -24,8 +16,7 @@
         </a>
         
         <div class="ms-auto d-flex align-items-center">
-            
-            <a href="/orders" class="btn btn-link text-light text-decoration-none me-2 small">
+            <a href="/orders" class="btn btn-outline-light btn-sm rounded-pill px-3 me-2">
                 <i class="bi bi-clock-history"></i> Riwayat
             </a>
 
@@ -63,7 +54,7 @@
 
     <h2 class="text-center mb-4 fw-bold text-dark">Katalog Produk Terbaru</h2>
 
-    <div class="search-bar">
+    <div class="search-bar mb-4 mx-auto" style="max-width: 500px;">
         <form action="/" method="GET" class="d-flex">
             <input class="form-control me-2 shadow-sm border-0 py-2" type="search" name="search" placeholder="Cari sparepart atau kategori..." value="{{ request('search') }}">
             <button class="btn btn-dark shadow-sm px-4" type="submit">Cari</button>
@@ -76,11 +67,15 @@
     <div class="row">
         @forelse($products as $p)
         <div class="col-md-4 mb-4">
-            <div class="card card-product h-100 shadow-sm">
+            <div class="card h-100 border-0 shadow-sm" 
+                 style="border-radius: 15px; overflow: hidden; transition: 0.3s;"
+                 onmouseover="this.style.transform='translateY(-8px)'; this.className='card h-100 border-0 shadow-lg';"
+                 onmouseout="this.style.transform='translateY(0)'; this.className='card h-100 border-0 shadow-sm';">
+                
                 @if($p->image)
-                    <img src="{{ asset('storage/' . $p->image) }}" class="product-img" alt="{{ $p->name }}">
+                    <img src="{{ asset('storage/' . $p->image) }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ $p->name }}">
                 @else
-                    <img src="https://via.placeholder.com/400x300?text=No+Image" class="product-img" alt="No Image">
+                    <img src="https://via.placeholder.com/400x300?text=No+Image" class="card-img-top" style="height: 200px; object-fit: cover;" alt="No Image">
                 @endif
 
                 <div class="card-body d-flex flex-column">

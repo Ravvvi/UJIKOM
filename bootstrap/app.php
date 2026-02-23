@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
             '/register',
             '/login',
             '/logout',
+            'store-order',
+            'orders/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

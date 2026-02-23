@@ -22,10 +22,16 @@ Route::middleware('guest')->group(function () {
     Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.update');
 });
 
-// --- TRANSAKSI & PEMBAYARAN ---
+// --- TRANSAKSI & PEMBAYARAN (ORDER) ---
+Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/checkout/{id}', [OrderController::class, 'checkout'])->name('orders.checkout');
 Route::post('/store-order', [OrderController::class, 'storeOrder'])->name('orders.store');
-Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+
+// --- ROUTE BARU UNTUK TEST CRUD DI POSTMAN ---
+Route::put('/orders/{id}', [OrderController::class, 'update'])->name('orders.update');
+Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
+
+// --- XENDIT & WEBHOOK ---
 Route::get('/payment/success/{id}', [OrderController::class, 'paymentSuccess'])->name('payment.success');
 Route::post('/webhook/xendit', [OrderController::class, 'handleWebhook']);
 Route::post('/create-invoice', [PaymentController::class, 'createInvoice'])->name('payment.create');

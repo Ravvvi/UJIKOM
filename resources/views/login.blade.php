@@ -44,6 +44,12 @@
                         <div class="alert alert-danger py-2 small">{{ session('error') }}</div>
                     @endif
 
+                    @if(session('success'))
+                        <div class="alert alert-success py-2 small">
+                            <i class="bi bi-check-circle me-1"></i> {{ session('success') }}
+                        </div>
+                    @endif
+
                     <form action="/login" method="POST">
                         @csrf
                         <div class="mb-3">
@@ -54,12 +60,18 @@
                             </div>
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-2">
                             <label class="form-label small fw-bold text-dark">Password</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock"></i></span>
                                 <input type="password" name="password" class="form-control bg-light border-start-0" placeholder="••••••••" required>
                             </div>
+                        </div>
+
+                        <div class="text-end mb-4">
+                            <a href="{{ route('password.request') }}" class="text-decoration-none small text-muted">
+                                Lupa Password?
+                            </a>
                         </div>
 
                         <button type="submit" class="btn btn-dark w-100 fw-bold py-2 mb-3 shadow-sm">
@@ -73,7 +85,7 @@
                 </div>
             </div>
             <div class="text-center mt-4">
-                <a href="/" class="text-light-50 text-decoration-none small text-white-50">
+                <a href="/" class="text-decoration-none small text-white-50">
                     <i class="bi bi-arrow-left me-1"></i> Kembali ke Katalog Produk
                 </a>
             </div>

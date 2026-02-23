@@ -81,4 +81,41 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return redirect('/')->with('success', 'Berhasil logout!');
     }
+
+    // --- FITUR FORGET PASSWORD ---
+    public function showForgotPassword() {
+        return view('forgot-password');
+    }
+
+    public function sendResetLink(Request $request) {
+        $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ], [
+            'email.exists' => 'Email ini nggak terdaftar, cek lagi deh.'
+        ]);
+
+        session(['reset_email' => $request->email]);
+
+        return redirect()->route('password.reset', ['token' => 'secret-token-123'])
+                         ->with('success', 'Email ditemukan! Silakan ganti password baru.');
+    }
+
+    public function showResetPassword($token) {
+        return view('reset-password', ['token' => $token]);
+    }
+
+    public function updatePassword(Request $request) {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:5|confirmed',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        $user->update([
+            'password' => bcrypt($request->password)
+        ]);
+        session()->forget('reset_email');
+
+        return redirect('/login')->with('success', 'Password berhasil diganti! Silakan login ulang.');
+    }
 }

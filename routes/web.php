@@ -14,6 +14,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+
+    // --- FORGET PASSWORD ROUTES ---
+    Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+    Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
+    Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.update');
 });
 
 // --- TRANSAKSI & PEMBAYARAN ---
@@ -24,11 +30,11 @@ Route::get('/payment/success/{id}', [OrderController::class, 'paymentSuccess'])-
 Route::post('/webhook/xendit', [OrderController::class, 'handleWebhook']);
 Route::post('/create-invoice', [PaymentController::class, 'createInvoice'])->name('payment.create');
 
-// --- AUTHENTICATED ROUTES (Harus Login) ---
+// --- AUTHENTICATED ROUTES ---
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // --- DASHBOARD ADMIN
+    // --- DASHBOARD ADMIN ---
     Route::get('/admin', [ProductController::class, 'adminIndex'])->name('admin.dashboard');
 
     // --- MANAJEMEN PRODUK ---

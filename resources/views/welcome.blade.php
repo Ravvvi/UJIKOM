@@ -19,21 +19,23 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm sticky-top">
     <div class="container">
-        <div class="d-flex align-items-center">
-            <a href="/orders" class="btn btn-outline-light btn-sm rounded-pill px-3 me-2">
-                <i class="bi bi-clock-history"></i> Riwayat
-            </a>
-            <a class="navbar-brand fw-bold" href="/">Sparepart PC Shop</a>
-        </div>
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="bi bi-cpu"></i> Sparepart PC Shop
+        </a>
         
         <div class="ms-auto d-flex align-items-center">
+            
+            <a href="/orders" class="btn btn-link text-light text-decoration-none me-2 small">
+                <i class="bi bi-clock-history"></i> Riwayat
+            </a>
+
             @auth
                 <span class="text-light small me-3 d-none d-md-inline">
                     {{ Auth::user()->role == 'admin' ? 'Admin:' : 'User:' }} <strong>{{ Auth::user()->name }}</strong>
                 </span>
 
                 @if(Auth::user()->role == 'admin')
-                    <a href="/create" class="btn btn-primary btn-sm me-2">+ Tambah Produk</a>
+                    <a href="/create" class="btn btn-primary btn-sm me-2">+ Tambah</a>
                 @endif
 
                 <form action="/logout" method="POST" class="d-inline">
@@ -44,7 +46,7 @@
                 </form>
             @else
                 <a href="/login" class="btn btn-outline-light btn-sm rounded-pill px-3">
-                    <i class="bi bi-person-lock me-1"></i> Login
+                    <i class="bi bi-person-lock"></i> Login
                 </a>
             @endauth
         </div>
@@ -63,7 +65,7 @@
 
     <div class="search-bar">
         <form action="/" method="GET" class="d-flex">
-            <input class="form-control me-2 shadow-sm border-0" type="search" name="search" placeholder="Cari sparepart atau kategori..." value="{{ request('search') }}">
+            <input class="form-control me-2 shadow-sm border-0 py-2" type="search" name="search" placeholder="Cari sparepart atau kategori..." value="{{ request('search') }}">
             <button class="btn btn-dark shadow-sm px-4" type="submit">Cari</button>
             @if(request('search'))
                 <a href="/" class="btn btn-link text-decoration-none text-muted">Reset</a>
@@ -72,7 +74,7 @@
     </div>
     
     <div class="row">
-        @foreach($products as $p)
+        @forelse($products as $p)
         <div class="col-md-4 mb-4">
             <div class="card card-product h-100 shadow-sm">
                 @if($p->image)
@@ -95,21 +97,21 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <a href="/checkout/{{ $p->id }}" class="btn btn-dark shadow-sm">
-                            <i class="bi bi-cart-plus me-1"></i> Beli Sekarang
+                        <a href="/checkout/{{ $p->id }}" class="btn {{ $p->stock > 0 ? 'btn-dark' : 'btn-secondary disabled' }} shadow-sm">
+                            <i class="bi bi-cart-plus me-1"></i> {{ $p->stock > 0 ? 'Beli Sekarang' : 'Stok Habis' }}
                         </a>
 
                         @auth
                             @if(Auth::user()->role == 'admin')
                             <div class="btn-group gap-1 mt-1">
                                 <a href="/edit/{{ $p->id }}" class="btn btn-warning btn-sm fw-bold rounded">
-                                    <i class="bi bi-pencil-square"></i> Edit
+                                    <i class="bi bi-pencil-square"></i>
                                 </a>
                                 <form action="/delete/{{ $p->id }}" method="POST" class="d-inline flex-grow-1">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger btn-sm fw-bold rounded w-100" onclick="return confirm('Yakin ingin menghapus {{ $p->name }}?')">
-                                        <i class="bi bi-trash"></i> Hapus
+                                    <button type="submit" class="btn btn-outline-danger btn-sm fw-bold rounded w-100" onclick="return confirm('Yakin ingin hapus?')">
+                                        <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
                             </div>
@@ -119,8 +121,14 @@
                 </div>
             </div>
         </div>
-        @endforeach
+        @empty
+        <div class="col-12 text-center py-5">
+            <p class="text-muted">Produk yang lo cari nggak ketemu, bro...</p>
+        </div>
+        @endforelse
     </div>
-    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

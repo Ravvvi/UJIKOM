@@ -92,9 +92,15 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <a href="/checkout/{{ $p->id }}" class="btn {{ $p->stock > 0 ? 'btn-dark' : 'btn-secondary disabled' }} shadow-sm">
-                            <i class="bi bi-cart-plus me-1"></i> {{ $p->stock > 0 ? 'Beli Sekarang' : 'Stok Habis' }}
-                        </a>
+                        @auth
+                            <a href="/checkout/{{ $p->id }}" class="btn {{ $p->stock > 0 ? 'btn-dark' : 'btn-secondary disabled' }} shadow-sm">
+                                <i class="bi bi-cart-plus me-1"></i> {{ $p->stock > 0 ? 'Beli Sekarang' : 'Stok Habis' }}
+                            </a>
+                        @else
+                            <a href="/login" class="btn {{ $p->stock > 0 ? 'btn-dark' : 'btn-secondary disabled' }} shadow-sm">
+                                <i class="bi bi-cart-plus me-1"></i> {{ $p->stock > 0 ? 'Beli Sekarang' : 'Stok Habis' }}
+                            </a>
+                        @endauth
 
                         @auth
                             @if(Auth::user()->role == 'admin')

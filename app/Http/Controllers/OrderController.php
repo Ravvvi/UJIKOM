@@ -9,81 +9,54 @@ use App\Http\Controllers\PaymentController;
 
 class OrderController extends Controller
 {
-    public function checkout($id)
-    {
-        $product = Product::findOrFail($id);
-        return view('checkout', compact('product')); 
-    }
-
     public function index()
     {
         $orders = Order::with('product')->latest()->get();
         return view('orders.index', compact('orders'));
     }
 
-    public function storeOrder(Request $request)
+    public function checkout($id)
     {
-        $request->validate([
-            'product_id' => 'required',
-            'customer_name' => 'required',
-            'quantity' => 'required|numeric|min:1',
-        ]);
+        $product = Product::findOrFail($id);
+        return view('checkout', compact('product')); 
+    }
 
-        $product = Product::findOrFail($request->product_id);
+    public function storeOrder(Request $request)
+{
+    $request->validate([
+        'product_id' => 'required',
+        'customer_name' => 'required',
+        'quantity' => 'required|numeric|min:1',
+    ]);
 
-        if ($product->stock < $request->quantity) {
-            return redirect()->back()->with('error', 'Maaf, stok tidak mencukupi!');
-        }
+    $product = Product::findOrFail($request->product_id);
 
-        $total_price = $product->price * $request->quantity;
+    if ($product->stock < $request->quantity) {
+        return redirect()->back()->with('error', 'Maaf, stok tidak mencukupi!');
+    }
 
-        $duplicate = Order::where('customer_name', $request->customer_name)
-            ->where('product_id', $request->product_id)
-            ->where('created_at', '>=', now()->subSeconds(5))
-            ->first();
+    $total_price = $product->price * $request->quantity;
 
-        if ($duplicate) {
-            return redirect('/orders');
-        }
+    $order = new Order();
+    $order->product_id = $request->product_id;
+    $order->customer_name = $request->customer_name;
+    $order->address = $request->address;
+    $order->quantity = $request->quantity;
+    $order->total_price = $total_price;
+    
+    // PAKAI ANGKA '1' - Cuma 1 karakter, database lo pasti nerima!
+    $order->status = '1'; 
+    $order->save();
 
-        $order = Order::create([
-            'product_id' => $request->product_id,
-            'customer_name' => $request->customer_name,
-            'address' => $request->address,
-            'quantity' => $request->quantity,
-            'total_price' => $total_price,
-            'sukses' => 'Sudah Terbayar', 
-        ]);
+    $product->decrement('stock', $request->quantity);
 
-        $product->decrement('stock', $request->quantity);
-
-        $request->merge([
-            'order_id' => $order->id,
-            'total_price' => $total_price,
-            'product_name' => $product->name
-        ]);
+    // KIRIM KE XENDIT
+    $request->merge([
+        'order_id' => $order->id,
+        'total_price' => $total_price,
+        'product_name' => $product->name
+    ]);
         
         return (new PaymentController())->createInvoice($request);
-    }
-
-    public function handleWebhook(Request $request)
-    {
-        $externalId = $request->external_id;
-        $status = $request->status;
-
-        $order = Order::find($externalId);
-
-        if ($order && ($status === 'PAID' || $status === 'SETTLED')) {
-            if ($order->status == 'Menunggu Pembayaran') {
-                $this->finalizeOrder($order);
-            }
-        }
-
-        return response()->json(['status' => 'success']);
-    }
-
-    private function finalizeOrder($order)
-    {
-        $order->update(['status' => 'Sudah Terbayar']);
     }
 }

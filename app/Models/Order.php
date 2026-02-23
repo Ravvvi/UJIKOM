@@ -9,7 +9,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'idx'; 
+    protected $primaryKey = 'id'; 
 
     protected $fillable = [
         'product_id', 
@@ -20,8 +20,9 @@ class Order extends Model
         'status'
     ];
 
+
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_id');
     }
 }

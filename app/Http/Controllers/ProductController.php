@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
+    // Halaman Katalog Depan untuk Pembeli
     public function index(Request $request)
     {
         $search = $request->search;
@@ -20,74 +21,81 @@ class ProductController extends Controller
         return view('welcome', compact('products'));
     }
 
-    // --- TAMBAHAN FUNGSI ADMIN INDEX ---
+    // Dashboard List Produk khusus Admin
     public function adminIndex()
     {
-        if (Auth::user()->role !== 'admin') {
-            return redirect('/')->with('error', 'Akses ditolak!');
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Akses ditolak! Anda bukan Admin.');
         }
 
-        $products = Product::all();
-        return view('admin', compact('products'));
+        $products = Product::latest()->get();
+        return view('admin', compact('products')); 
     }
 
     public function create()
     {
-        if (Auth::user()->role !== 'admin') {
-            return redirect('/')->with('error', 'Akses ditolak! Anda bukan Admin.');
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Akses ditolak!');
         }
-        return view('create');
+        return view('create'); 
     }
 
     public function store(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            return redirect('/')->with('error', 'Anda tidak memiliki otoritas ini.');
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Akses ditolak!');
         }
 
-        $data = $request->validate([
-            'name' => 'required',
-            'category' => 'required',
-            'price' => 'required|numeric',
-            'stock' => 'required|numeric',
+        $validatedData = $request->validate([
+            'name'        => 'required|string|max:255',
+            'category'    => 'required|string',
+            'price'       => 'required|numeric',
+            'stock'       => 'required|numeric',
             'description' => 'required',
-            'image' => 'nullable|image|mimes:jpg,png,jpeg|max:2048' 
+            'image'       => 'required|image|max:2048'
         ]);
 
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
-            $data['image'] = $path;
-        }
+        try {
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('products', 'public');
+                $validatedData['image'] = $path;
+            }
 
-        Product::create($data);
-        return redirect('/admin')->with('success', 'Barang berhasil ditambahkan!');
+            Product::create($validatedData);
+
+            return redirect()->route('admin.dashboard')->with('success', 'Barang berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Database Error: ' . $e->getMessage());
+        }
     }
 
+    // Form Edit Produk
     public function edit($id)
     {
-        if (Auth::user()->role !== 'admin') {
-            return redirect('/')->with('error', 'Akses terbatas untuk Admin.');
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Akses ditolak!');
         }
 
         $product = Product::findOrFail($id);
         return view('edit', compact('product'));
     }
 
+    // PROSES UPDATE
     public function update(Request $request, $id)
     {
-        if (Auth::user()->role !== 'admin') {
-            return redirect('/')->with('error', 'Update gagal: Anda bukan Admin.');
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Akses ditolak!');
         }
 
         $product = Product::findOrFail($id);
 
-        $data = $request->validate([
-            'name' => 'required',
-            'category' => 'required',
-            'price' => 'required|numeric',
-            'stock' => 'required|numeric',
+        $validatedData = $request->validate([
+            'name'        => 'required|string|max:255',
+            'category'    => 'required|string',
+            'price'       => 'required|numeric',
+            'stock'       => 'required|numeric',
             'description' => 'required',
-            'image' => 'nullable|image|mimes:jpg,png,jpeg|max:2048'
+            'image'       => 'nullable|image|max:2048'
         ]);
 
         if ($request->hasFile('image')) {
@@ -95,17 +103,18 @@ class ProductController extends Controller
                 Storage::disk('public')->delete($product->image);
             }
             $path = $request->file('image')->store('products', 'public');
-            $data['image'] = $path;
+            $validatedData['image'] = $path;
         }
 
-        $product->update($data);
-        return redirect('/admin')->with('success', 'Produk berhasil diperbarui!');
+        $product->update($validatedData);
+        return redirect()->route('admin.dashboard')->with('success', 'Produk berhasil diperbarui!');
     }
 
+    // Proses Hapus Produk
     public function destroy($id)
     {
-        if (Auth::user()->role !== 'admin') {
-            return redirect('/')->with('error', 'Hanya Admin yang boleh menghapus produk.');
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Akses ditolak!');
         }
 
         $product = Product::findOrFail($id);
@@ -115,6 +124,6 @@ class ProductController extends Controller
         }
 
         $product->delete();
-        return redirect('/admin')->with('success', 'Produk berhasil dihapus!');
+        return redirect()->route('admin.dashboard')->with('success', 'Produk berhasil dihapus!');
     }
 }

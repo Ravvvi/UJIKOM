@@ -22,53 +22,72 @@
                 </div>
                 <div class="card-body p-4">
                     
-                    <form action="/store" method="POST" enctype="multipart/form-data">
+                    {{-- Alert untuk Error Validasi --}}
+                    @if ($errors->any())
+                        <div class="alert alert-danger shadow-sm border-0">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    {{-- Alert untuk Session Error --}}
+                    @if(session('error'))
+                        <div class="alert alert-danger shadow-sm border-0">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-3">
                             <label class="fw-bold">Nama Barang</label>
-                            <input type="text" name="name" class="form-control" placeholder="Contoh: NVIDIA RTX 4060" required>
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="Contoh: NVIDIA RTX 4060" required>
                         </div>
 
                         <div class="mb-3">
                             <label class="fw-bold">Kategori</label>
-                            <select name="category" class="form-select" required>
+                            <select name="category" class="form-select @error('category') is-invalid @enderror" required>
                                 <option value="">-- Pilih Kategori Sparepart --</option>
-                                <option value="GPU">GPU (Graphics Card)</option>
-                                <option value="CPU">CPU (Processor)</option>
-                                <option value="RAM">RAM (Memory)</option>
-                                <option value="Storage">Storage (SSD/HDD)</option>
-                                <option value="Motherboard">Motherboard</option>
-                                <option value="PSU">PSU (Power Supply)</option>
+                                <option value="GPU" {{ old('category') == 'GPU' ? 'selected' : '' }}>GPU (Graphics Card)</option>
+                                <option value="CPU" {{ old('category') == 'CPU' ? 'selected' : '' }}>CPU (Processor)</option>
+                                <option value="RAM" {{ old('category') == 'RAM' ? 'selected' : '' }}>RAM (Memory)</option>
+                                <option value="Storage" {{ old('category') == 'Storage' ? 'selected' : '' }}>Storage (SSD/HDD)</option>
+                                <option value="Motherboard" {{ old('category') == 'Motherboard' ? 'selected' : '' }}>Motherboard</option>
+                                <option value="PSU" {{ old('category') == 'PSU' ? 'selected' : '' }}>PSU (Power Supply)</option>
                             </select>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="fw-bold">Harga (Rp)</label>
-                                <input type="number" name="price" class="form-control" placeholder="0" required>
+                                <input type="number" name="price" class="form-control @error('price') is-invalid @enderror" value="{{ old('price') }}" placeholder="0" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="fw-bold">Stok</label>
-                                <input type="number" name="stock" class="form-control" placeholder="0" required>
+                                <input type="number" name="stock" class="form-control @error('stock') is-invalid @enderror" value="{{ old('stock') }}" placeholder="0" required>
                             </div>
                         </div>
 
                         <div class="mb-4">
                             <label class="fw-bold">Unggah Foto Produk</label>
-                            <input type="file" name="image" class="form-control" accept="image/*" required>
+                            {{-- Perubahan: accept="image/*" memastikan browser memfilter file gambar --}}
+                            <input type="file" name="image" class="form-control @error('image') is-invalid @enderror" accept="image/png, image/jpeg, image/jpg" required>
                             <small class="text-muted d-block mt-1">Format: JPG, PNG, JPEG (Maks. 2MB)</small>
                         </div>
 
                         <div class="mb-3">
                             <label class="fw-bold">Spesifikasi Singkat</label>
-                            <textarea name="description" class="form-control" rows="4" placeholder="Jelaskan detail barang..." required></textarea>
+                            <textarea name="description" class="form-control @error('description') is-invalid @enderror" rows="4" placeholder="Jelaskan detail barang..." required>{{ old('description') }}</textarea>
                         </div>
 
                         <hr>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary fw-bold py-2">Simpan ke Database</button>
+                            <button type="submit" class="btn btn-primary fw-bold py-2 shadow-sm">Simpan ke Database</button>
                             <a href="/" class="btn btn-outline-secondary py-2">Batal & Kembali</a>
                         </div>
                     </form>

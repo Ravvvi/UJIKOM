@@ -55,7 +55,8 @@
                                 <option value="GPU" {{ old('category') == 'GPU' ? 'selected' : '' }}>GPU (Graphics Card)</option>
                                 <option value="CPU" {{ old('category') == 'CPU' ? 'selected' : '' }}>CPU (Processor)</option>
                                 <option value="RAM" {{ old('category') == 'RAM' ? 'selected' : '' }}>RAM (Memory)</option>
-                                <option value="Storage" {{ old('category') == 'Storage' ? 'selected' : '' }}>Storage (SSD/HDD)</option>
+                                <option value="SSD" {{ old('category') == 'SSD' ? 'selected' : '' }}>SSD</option>
+                                <option value="HDD" {{ old('category') == 'HDD' ? 'selected' : '' }}>HDD</option>
                                 <option value="Motherboard" {{ old('category') == 'Motherboard' ? 'selected' : '' }}>Motherboard</option>
                                 <option value="PSU" {{ old('category') == 'PSU' ? 'selected' : '' }}>PSU (Power Supply)</option>
                                 <option value="CASE" {{ old('category') == 'CasE' ? 'selected' : '' }}>CASE</option>

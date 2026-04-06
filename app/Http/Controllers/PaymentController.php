@@ -34,7 +34,7 @@ class PaymentController extends Controller
             
             return redirect($result['invoice_url']);
         } catch (\Exception $e) {
-            return "Waduh, ada kendala: " . $e->getMessage();
+            return "sorry there's something error: " . $e->getMessage();
         }
     }
 }

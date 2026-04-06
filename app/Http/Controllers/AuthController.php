@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -45,7 +46,7 @@ class AuthController extends Controller
         ]);
 
         $finalRole = 'user';
-        $kodeRahasiaAdmin = "ADMIN123";
+        $kodeRahasiaAdmin = 'ADMIN123';
 
         if ($request->role == 'admin') {
             $isEmailValid = str_contains(strtolower($request->email), '@admin.com');
@@ -59,20 +60,14 @@ class AuthController extends Controller
             }
         }
 
-        $user = User::create([
+        User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => bcrypt($data['password']),
+            'password' => Hash::make($data['password']),
             'role' => $finalRole,
         ]);
 
-        Auth::login($user); 
-        
-        if ($finalRole == 'admin') {
-            return redirect('/admin')->with('success', 'Akun Admin aktif! Panel manajemen siap digunakan.');
-        }
-
-        return redirect('/')->with('success', 'Pendaftaran berhasil sebagai Pembeli!');
+        return redirect('/login')->with('success', 'Pendaftaran berhasil! Silakan masuk menggunakan akun baru lo.');
     }
 
     public function logout(Request $request) {
@@ -112,7 +107,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
         $user->update([
-            'password' => bcrypt($request->password)
+            'password' => Hash::make($request->password)
         ]);
         session()->forget('reset_email');
 

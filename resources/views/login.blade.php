@@ -64,7 +64,7 @@
                             <label class="form-label small fw-bold text-dark">Password</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock"></i></span>
-                                <input type="password" name="password" class="form-control bg-light border-start-0" placeholder="••••••••" required>
+                                <input type="password" name="password" class="form-control bg-light border-start-0" placeholder="input your password here" required>
                             </div>
                         </div>
 

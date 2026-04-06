@@ -27,11 +27,14 @@
                         <div class="mb-3">
                             <label class="form-label fw-bold">Kategori</label>
                             <select name="category" class="form-select" required>
-                                <option value="VGA" {{ $product->category == 'VGA' ? 'selected' : '' }}>VGA</option>
-                                <option value="Processor" {{ $product->category == 'Processor' ? 'selected' : '' }}>Processor</option>
-                                <option value="RAM" {{ $product->category == 'RAM' ? 'selected' : '' }}>RAM</option>
-                                <option value="Motherboard" {{ $product->category == 'Motherboard' ? 'selected' : '' }}>Motherboard</option>
-                                <option value="PSU" {{ $product->category == 'PSU' ? 'selected' : '' }}>PSU</option>
+                                <option value="">-- Pilih Kategori Sparepart --</option>
+                                <option value="GPU" {{ old('category') == 'GPU' ? 'selected' : '' }}>GPU (Graphics Card)</option>
+                                <option value="CPU" {{ old('category') == 'CPU' ? 'selected' : '' }}>CPU (Processor)</option>
+                                <option value="RAM" {{ old('category') == 'RAM' ? 'selected' : '' }}>RAM (Memory)</option>
+                                <option value="Storage" {{ old('category') == 'Storage' ? 'selected' : '' }}>Storage (SSD/HDD)</option>
+                                <option value="Motherboard" {{ old('category') == 'Motherboard' ? 'selected' : '' }}>Motherboard</option>
+                                <option value="PSU" {{ old('category') == 'PSU' ? 'selected' : '' }}>PSU (Power Supply)</option>
+                                <option value="CASE" {{ old('category') == 'CasE' ? 'selected' : '' }}>CASE</option>
                             </select>
                         </div>
 

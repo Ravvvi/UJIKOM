@@ -58,6 +58,7 @@
                                 <option value="Storage" {{ old('category') == 'Storage' ? 'selected' : '' }}>Storage (SSD/HDD)</option>
                                 <option value="Motherboard" {{ old('category') == 'Motherboard' ? 'selected' : '' }}>Motherboard</option>
                                 <option value="PSU" {{ old('category') == 'PSU' ? 'selected' : '' }}>PSU (Power Supply)</option>
+                                <option value="CASE" {{ old('category') == 'CasE' ? 'selected' : '' }}>CASE</option>
                             </select>
                         </div>
 

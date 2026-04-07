@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Xendit\Configuration;
 use Xendit\Invoice\InvoiceApi;
 use Xendit\Invoice\CreateInvoiceRequest;
+use App\Models\Order;
 
 class PaymentController extends Controller
 {
@@ -27,7 +28,6 @@ class PaymentController extends Controller
             'invoice_duration' => 86400,
             'success_redirect_url' => url('/my-orders'), 
             'failure_redirect_url' => url('/my-orders'),
-            
             'currency' => 'IDR',
         ]);
 
@@ -37,5 +37,23 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             return "sorry there's something error: " . $e->getMessage();
         }
+    }
+
+    public function handleCallback(Request $request)
+    {
+        $callbackData = $request->all();
+        $externalId = $callbackData['external_id'];
+        $parts = explode('-', $externalId);
+        $orderId = $parts[1]; 
+        $order = Order::find($orderId);
+
+        if ($order && $callbackData['status'] === 'PAID') {
+            $order->status = 'Selesai';
+            $order->save();
+            
+            return response()->json(['message' => 'Status berhasil diperbarui'], 200);
+        }
+
+        return response()->json(['message' => 'Data diterima, tapi tidak ada perubahan'], 200);
     }
 }

@@ -25,13 +25,14 @@ class PaymentController extends Controller
             'amount' => (float) $request->total_price,
             'description' => 'Pembayaran ' . $request->product_name . ' (Order #' . $orderId . ')',
             'invoice_duration' => 86400,
-            'success_redirect_url' => url('/orders'), 
+            'success_redirect_url' => url('/my-orders'), 
+            'failure_redirect_url' => url('/my-orders'),
+            
             'currency' => 'IDR',
         ]);
 
         try {
             $result = $apiInstance->createInvoice($create_invoice_request);
-            
             return redirect($result['invoice_url']);
         } catch (\Exception $e) {
             return "sorry there's something error: " . $e->getMessage();

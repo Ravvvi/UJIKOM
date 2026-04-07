@@ -6,16 +6,28 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PaymentController; 
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    /*Menampilkan semua riwayat transaksi untuk Admin*/
-
+    /* Menampilkan semua riwayat transaksi untuk Admin */
     public function index()
     {
         $orders = Order::with('product')->latest()->get();
         
         return view('admin.transactions', compact('orders'));
+    }
+
+    /* Fungsi Riwayat untuk User (Biar nggak 404/Not Found lagi) */
+    public function myOrders()
+    {
+        // Ambil pesanan yang hanya milik user yang sedang login
+        $orders = Order::with('product')
+            ->where('user_id', Auth::id()) 
+            ->latest()
+            ->get();
+
+        return view('user.orders', compact('orders'));
     }
 
     public function checkout($id)
@@ -42,12 +54,13 @@ class OrderController extends Controller
         $total_price = $product->price * $request->quantity;
 
         $order = new Order();
+        $order->user_id = Auth::id();
         $order->product_id = $request->product_id;
         $order->customer_name = $request->customer_name;
         $order->address = $request->address;
         $order->quantity = $request->quantity;
         $order->total_price = $total_price;
-        $order->status = '1';
+        $order->status = 'pending';
         $order->save();
 
         $product->decrement('stock', $request->quantity);
@@ -62,7 +75,6 @@ class OrderController extends Controller
     }
 
     /* Update data transaksi */
-    
     public function update(Request $request, $id)
     {
         $order = Order::findOrFail($id);
@@ -74,8 +86,7 @@ class OrderController extends Controller
         ]);
     }
 
-    /* Hapus riwayat transaksi*/
-
+    /* Hapus riwayat transaksi */
     public function destroy($id)
     {
         $order = Order::findOrFail($id);

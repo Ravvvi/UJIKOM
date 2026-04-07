@@ -28,15 +28,16 @@ Route::middleware('auth')->group(function () {
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // --- TRANSAKSI & PEMBAYARAN ---
+    // --- TRANSAKSI & PEMBAYARAN  ---
     Route::get('/checkout/{id}', [OrderController::class, 'checkout'])->name('orders.checkout');
     Route::post('/store-order', [OrderController::class, 'storeOrder'])->name('orders.store');
+    Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('user.orders');
     
     // Payment & Xendit
     Route::get('/payment/success/{id}', [OrderController::class, 'paymentSuccess'])->name('payment.success');
     Route::post('/create-invoice', [PaymentController::class, 'createInvoice'])->name('payment.create');
 
-    // --- KHUSUS ROLE ADMIN ---
+    // --- KHUSUS ROLE ADMIN  ---
     Route::prefix('admin')->group(function () {
         
         Route::get('/', function () {
@@ -54,7 +55,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/update/{id}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/delete/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 
-        // Manajem Transaksi Manual
+        // Manajemen Transaksi Manual
         Route::get('/confirm-manual/{id}', [OrderController::class, 'confirmOrder'])->name('order.confirm');
         Route::put('/orders/{id}', [OrderController::class, 'update'])->name('orders.update');
         Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');

@@ -57,7 +57,7 @@
     <div class="container">
         <div class="text-center mb-5">
             <h2 class="fw-bold text-dark">Manajemen Katalog Produk</h2>
-            <p class="text-muted">Kelola stok dan harga sparepart PC lo di sini.</p>
+            <p class="text-muted">Kelola stok dan harga sparepart PC di sini.</p>
             <div class="mx-auto" style="max-width: 500px;">
                 <form action="{{ route('admin.dashboard') }}" method="GET" class="d-flex">
                     <input type="text" name="search" class="form-control me-2 rounded-pill shadow-sm border-0 py-2 px-4" placeholder="Cari sparepart..." value="{{ request('search') }}">

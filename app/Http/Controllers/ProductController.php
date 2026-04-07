@@ -29,14 +29,17 @@ class ProductController extends Controller
         }
 
         $products = Product::latest()->get();
-        return view('admin', compact('products')); 
+        
+        return view('admin.dashboard', compact('products')); 
     }
 
+    // Form Tambah Produk
     public function create()
     {
         if (!Auth::check() || Auth::user()->role !== 'admin') {
             return redirect('/')->with('error', 'Akses ditolak!');
         }
+        
         return view('create'); 
     }
 
@@ -77,6 +80,7 @@ class ProductController extends Controller
         }
 
         $product = Product::findOrFail($id);
+        
         return view('edit', compact('product'));
     }
 

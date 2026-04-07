@@ -9,10 +9,13 @@ use App\Http\Controllers\PaymentController;
 
 class OrderController extends Controller
 {
+    /*Menampilkan semua riwayat transaksi untuk Admin*/
+
     public function index()
     {
         $orders = Order::with('product')->latest()->get();
-        return view('orders.index', compact('orders'));
+        
+        return view('admin.transactions', compact('orders'));
     }
 
     public function checkout($id)
@@ -26,6 +29,7 @@ class OrderController extends Controller
         $request->validate([
             'product_id' => 'required',
             'customer_name' => 'required',
+            'address' => 'required',
             'quantity' => 'required|numeric|min:1',
         ]);
 
@@ -43,7 +47,7 @@ class OrderController extends Controller
         $order->address = $request->address;
         $order->quantity = $request->quantity;
         $order->total_price = $total_price;
-        $order->status = '1'; 
+        $order->status = '1';
         $order->save();
 
         $product->decrement('stock', $request->quantity);
@@ -57,7 +61,8 @@ class OrderController extends Controller
         return (new PaymentController())->createInvoice($request);
     }
 
-    // --- FUNGSI UPDATE BARU ---
+    /* Update data transaksi */
+    
     public function update(Request $request, $id)
     {
         $order = Order::findOrFail($id);
@@ -69,13 +74,13 @@ class OrderController extends Controller
         ]);
     }
 
+    /* Hapus riwayat transaksi*/
+
     public function destroy($id)
     {
         $order = Order::findOrFail($id);
         $order->delete();
 
-        return response()->json([
-            'message' => 'Data berhasil dihapus!'
-        ]);
+        return redirect()->back()->with('success', 'Riwayat transaksi berhasil dihapus!');
     }
 }

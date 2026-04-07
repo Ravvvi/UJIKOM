@@ -6,7 +6,6 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
-
 // --- PUBLIC ROUTES ---
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
 
@@ -24,13 +23,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.update');
 });
 
-// --- AUTHENTICATED ROUTES (Wajib Login) ---
+// --- AUTHENTICATED ROUTES ---
 Route::middleware('auth')->group(function () {
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // --- TRANSAKSI & PEMBAYARAN ---
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/checkout/{id}', [OrderController::class, 'checkout'])->name('orders.checkout');
     Route::post('/store-order', [OrderController::class, 'storeOrder'])->name('orders.store');
     
@@ -38,22 +36,30 @@ Route::middleware('auth')->group(function () {
     Route::get('/payment/success/{id}', [OrderController::class, 'paymentSuccess'])->name('payment.success');
     Route::post('/create-invoice', [PaymentController::class, 'createInvoice'])->name('payment.create');
 
-    // --- KHUSUS ROLE ADMIN (Manajemen Produk) ---
-    // Pastikan di Controller sudah ada pengecekan role 'admin'
-    Route::get('/admin', [ProductController::class, 'adminIndex'])->name('admin.dashboard');
+    // --- KHUSUS ROLE ADMIN ---
+    Route::prefix('admin')->group(function () {
+        
+        Route::get('/', function () {
+            return redirect()->route('admin.dashboard');
+        });
 
-    // CRUD Produk
-    Route::get('/create', [ProductController::class, 'create'])->name('products.create');
-    Route::post('/store', [ProductController::class, 'store'])->name('products.store');
-    Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('products.edit');
-    Route::post('/update/{id}', [ProductController::class, 'update'])->name('products.update');
-    Route::delete('/delete/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+        // Dashboard & Riwayat Transaksi
+        Route::get('/dashboard', [ProductController::class, 'adminIndex'])->name('admin.dashboard');
+        Route::get('/transactions', [OrderController::class, 'index'])->name('admin.transactions');
 
-    // Manajemen Order Manual
-    Route::get('/confirm-manual/{id}', [OrderController::class, 'confirmOrder'])->name('order.confirm');
-    Route::put('/orders/{id}', [OrderController::class, 'update'])->name('orders.update');
-    Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
+        // CRUD Produk
+        Route::get('/create', [ProductController::class, 'create'])->name('products.create');
+        Route::post('/store', [ProductController::class, 'store'])->name('products.store');
+        Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('products.edit');
+        Route::post('/update/{id}', [ProductController::class, 'update'])->name('products.update');
+        Route::delete('/delete/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+        // Manajem Transaksi Manual
+        Route::get('/confirm-manual/{id}', [OrderController::class, 'confirmOrder'])->name('order.confirm');
+        Route::put('/orders/{id}', [OrderController::class, 'update'])->name('orders.update');
+        Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
+    });
 });
 
-// --- WEBHOOK ---
+// --- WEBHOOK (Xendit) ---
 Route::post('/webhook/xendit', [OrderController::class, 'handleWebhook']);

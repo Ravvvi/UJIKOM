@@ -28,23 +28,26 @@ Route::middleware('auth')->group(function () {
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // --- TRANSAKSI & PEMBAYARAN  ---
+    // --- TRANSAKSI & PEMBAYARAN USER ---
     Route::get('/checkout/{id}', [OrderController::class, 'checkout'])->name('orders.checkout');
     Route::post('/store-order', [OrderController::class, 'storeOrder'])->name('orders.store');
+    
     Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('user.orders');
     
-    // Payment & Xendit
+    Route::redirect('/orders', '/my-orders');
+
+    // Payment & Xendit Flow
     Route::get('/payment/success/{id}', [OrderController::class, 'paymentSuccess'])->name('payment.success');
     Route::post('/create-invoice', [PaymentController::class, 'createInvoice'])->name('payment.create');
 
-    // --- KHUSUS ROLE ADMIN  ---
+    // --- KHUSUS ROLE ADMIN ---
     Route::prefix('admin')->group(function () {
         
         Route::get('/', function () {
             return redirect()->route('admin.dashboard');
         });
 
-        // Dashboard & Riwayat Transaksi
+        // Dashboard & Riwayat
         Route::get('/dashboard', [ProductController::class, 'adminIndex'])->name('admin.dashboard');
         Route::get('/transactions', [OrderController::class, 'index'])->name('admin.transactions');
 
@@ -62,5 +65,5 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-// --- WEBHOOK (Xendit) ---
-Route::post('/webhook/xendit', [OrderController::class, 'handleWebhook']);
+// --- WEBHOOK XENDIT ---
+Route::post('/api/xendit/callback', [OrderController::class, 'handleWebhook']);

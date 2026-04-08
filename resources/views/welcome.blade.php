@@ -16,7 +16,7 @@
         </a>
         
         <div class="ms-auto d-flex align-items-center">
-            <a href="/orders" class="btn btn-outline-light btn-sm rounded-pill px-3 me-2">
+            <a href="/my-orders" class="btn btn-outline-light btn-sm rounded-pill px-3 me-2">
                 <i class="bi bi-clock-history"></i> Riwayat
             </a>
 
@@ -124,7 +124,7 @@
         </div>
         @empty
         <div class="col-12 text-center py-5">
-            <p class="text-muted">Produk yang lo cari nggak ketemu, bro...</p>
+            <p class="text-muted">Produk yang lo cari nggak ketemu</p>
         </div>
         @endforelse
     </div>

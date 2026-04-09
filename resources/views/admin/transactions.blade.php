@@ -9,26 +9,35 @@
     <style>
         .navbar { backdrop-filter: blur(10px); }
         .card { border-radius: 15px; }
+        .table-hover tbody tr:hover { background-color: rgba(0,0,0,0.02); }
     </style>
 </head>
 <body class="bg-light">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
+            <a class="navbar-brand fw-bold" href="{{ route('admin.dashboard') }}">
                 <i class="bi bi-cpu"></i> Sparepart PC Shop (Admin)
             </a>
             <div class="ms-auto">
-                <a href="/" class="btn btn-outline-light btn-sm rounded-pill px-3">
-                    <i class="bi bi-arrow-left"></i> Ke Toko
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                    <i class="bi bi-arrow-left"></i> Kembali ke Dashboard
                 </a>
             </div>
         </div>
     </nav>
 
-    <div class="container">
+    <div class="container pb-5">
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold text-dark"><i class="bi bi-receipt text-primary"></i> Kelola Semua Transaksi</h2>
+            <span class="badge bg-dark rounded-pill px-3">{{ $orders->count() }} Pesanan</span>
         </div>
 
         <div class="card border-0 shadow-sm overflow-hidden">
@@ -52,14 +61,14 @@
                             <td class="fw-bold text-success">Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
                             <td>
                                 @if($order->status == 'pending')
-                                    <span class="badge bg-warning text-dark rounded-pill">Pending</span>
+                                    <span class="badge bg-warning text-dark rounded-pill px-3">Pending</span>
                                 @else
                                     <span class="badge bg-success rounded-pill px-3">Selesai</span>
                                 @endif
                             </td>
                             <td>{{ $order->created_at->format('d M Y, H:i') }}</td>
                             <td class="text-center">
-                                <form action="{{ url('/orders/'.$order->id) }}" method="POST" class="d-inline">
+                                <form action="{{ route('orders.destroy', $order->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-outline-danger border-0" onclick="return confirm('Hapus riwayat?')">
@@ -70,7 +79,10 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">Belum ada transaksi masuk.</td>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                Belum ada transaksi masuk.
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -78,5 +90,7 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

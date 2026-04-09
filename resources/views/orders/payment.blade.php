@@ -38,7 +38,7 @@
                     </div>
 
                     <div class="bg-light p-3 rounded mb-4 border text-center shadow-sm">
-                        <h6 class="fw-bold mb-3">📸 Bayar Pakai QRIS</h6>
+                        <h6 class="fw-bold mb-3"> Bayar Pakai QRIS</h6>
                         <div class="mb-3">
                             <img src="{{ asset('images/gopay.jpeg') }}" alt="QRIS Pembayaran" class="img-fluid rounded shadow-sm" style="max-width: 250px;">
                         </div>

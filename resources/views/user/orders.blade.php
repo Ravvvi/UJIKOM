@@ -12,7 +12,7 @@
     <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/">
-                <i class="bi bi-cpu"></i> PC Master Hub
+                <i class="bi bi-cpu"></i> Sparepart PC Shop
             </a>
             <a href="/" class="btn btn-outline-light btn-sm rounded-pill">Kembali ke Toko</a>
         </div>

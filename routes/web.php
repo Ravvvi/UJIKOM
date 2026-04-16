@@ -55,7 +55,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [ProductController::class, 'create'])->name('products.create');
         Route::post('/store', [ProductController::class, 'store'])->name('products.store');
         Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('products.edit');
-        Route::post('/update/{id}', [ProductController::class, 'update'])->name('products.update');
+        
+        // PERBAIKAN: Ganti POST menjadi PUT supaya sinkron dengan @method('PUT') di form edit
+        Route::put('/update/{id}', [ProductController::class, 'update'])->name('products.update');
+        
         Route::delete('/delete/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 
         // Manajemen Transaksi Manual

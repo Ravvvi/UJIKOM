@@ -14,26 +14,35 @@ class OrderController extends Controller
     public function index()
     {
         $orders = Order::with('product')->latest()->get();
-        
+        // Sesuai folder resources/views/admin/transactions.blade.php
         return view('admin.transactions', compact('orders'));
     }
 
-    /* Fungsi Riwayat untuk User (Biar nggak 404/Not Found lagi) */
+    /* Fungsi Riwayat untuk User (SUDAH DIPERBAIKI) */
     public function myOrders()
     {
-        // Ambil pesanan yang hanya milik user yang sedang login
         $orders = Order::with('product')
             ->where('user_id', Auth::id()) 
             ->latest()
             ->get();
 
-        return view('user.orders', compact('orders'));
+        // GANTI INI: Dari 'user.orders' ke 'orders.index' 
+        // Karena di folder views lo, filenya ada di orders/index.blade.php
+        return view('orders.index', compact('orders'));
     }
 
     public function checkout($id)
     {
         $product = Product::findOrFail($id);
+        // Sesuai folder resources/views/checkout.blade.php
         return view('checkout', compact('product')); 
+    }
+
+    public function paymentSuccess($id)
+    {
+        $order = Order::with('product')->findOrFail($id);
+        // Sesuai folder resources/views/orders/payment.blade.php
+        return view('orders.payment', compact('order'));
     }
 
     public function storeOrder(Request $request)
